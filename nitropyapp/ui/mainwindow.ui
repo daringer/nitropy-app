@@ -29,6 +29,81 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
+     <widget class="QFrame" name="formFrame">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="baseSize">
+       <size>
+        <width>12</width>
+        <height>10</height>
+       </size>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout_10">
+       <item>
+        <widget class="QLabel" name="label_8">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="pixmap">
+          <pixmap resource="resources.qrc">:/images/splash.png</pixmap>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_8">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton">
+         <property name="cursor">
+          <cursorShape>ArrowCursor</cursorShape>
+         </property>
+         <property name="mouseTracking">
+          <bool>false</bool>
+         </property>
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
+         <property name="text">
+          <string>Help</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>images/new/icon_fragezeichen.svg</normaloff>images/new/icon_fragezeichen.svg</iconset>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_2">
+         <property name="text">
+          <string>About</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>images/new/icon_about_nitrokey.svg</normaloff>images/new/icon_about_nitrokey.svg</iconset>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="sizePolicy">
        <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
@@ -43,7 +118,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>4</number>
+       <number>0</number>
       </property>
       <property name="elideMode">
        <enum>Qt::ElideNone</enum>
@@ -222,6 +297,13 @@
         <string>OTP Slot Configuration</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_16">
+        <item>
+         <widget class="QCheckBox" name="checkBox_2">
+          <property name="text">
+           <string>Advanced mode</string>
+          </property>
+         </widget>
+        </item>
         <item>
          <widget class="QFrame" name="frame_8">
           <property name="autoFillBackground">
@@ -1266,6 +1348,16 @@
         </item>
        </layout>
       </widget>
+      <widget class="QWidget" name="tab_7">
+       <attribute name="title">
+        <string>Storage</string>
+       </attribute>
+      </widget>
+      <widget class="QWidget" name="tab_6">
+       <attribute name="title">
+        <string>FIDO2</string>
+       </attribute>
+      </widget>
       <widget class="QWidget" name="tab_4">
        <attribute name="title">
         <string>Settings</string>
@@ -1608,7 +1700,7 @@
      <x>0</x>
      <y>0</y>
      <width>932</width>
-     <height>27</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>
@@ -1681,18 +1773,18 @@
  </resources>
  <connections>
   <connection>
-   <sender>generalCancelButton</sender>
+   <sender>btn_cancelSettings</sender>
    <signal>clicked()</signal>
    <receiver>MainWindow</receiver>
    <slot>hide()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>824</x>
-     <y>675</y>
+     <x>823</x>
+     <y>674</y>
     </hint>
     <hint type="destinationlabel">
-     <x>300</x>
-     <y>368</y>
+     <x>6</x>
+     <y>670</y>
     </hint>
    </hints>
   </connection>
@@ -1709,22 +1801,6 @@
     <hint type="destinationlabel">
      <x>262</x>
      <y>366</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>btn_cancelSettings</sender>
-   <signal>clicked()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>hide()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>823</x>
-     <y>674</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>6</x>
-     <y>670</y>
     </hint>
    </hints>
   </connection>
@@ -1773,6 +1849,22 @@
     <hint type="destinationlabel">
      <x>897</x>
      <y>384</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>generalCancelButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>824</x>
+     <y>675</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>300</x>
+     <y>368</y>
     </hint>
    </hints>
   </connection>
