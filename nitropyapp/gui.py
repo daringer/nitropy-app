@@ -16,7 +16,62 @@ import nitropyapp.libnk as nk_api
 #pyrcc5 -o gui_resources.py ui/resources.qrc
 import nitropyapp.gui_resources
 
+####make button green(stylesheet)
+green = ("QPushButton {"
+         "color: #333;"
+         "border: 2px solid #555;"
+         "border-radius: 40px;"
+         "border-style: outset;"
+         "background: qradialgradient("
+            "cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,"
+            "radius: 1.35, stop: 0 #fff, stop: 1 rgb(115, 210, 22)"
+            ");"
+         "padding: 5px;"
+        "}"
 
+        "QPushButton:hover {"
+         "background: qradialgradient("
+            "cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,"
+            "radius: 1.35, stop: 0 #fff, stop: 1 #bbb"
+         ");"
+        "}"
+
+        "QPushButton:pressed {"
+         "border-style: inset;"
+         "background: qradialgradient("
+             "cx: 0.4, cy: -0.1, fx: 0.4, fy: -0.1,"
+             "radius: 1.35, stop: 0 #fff, stop: 1 #ddd"
+         ");"
+        "}"
+)
+####make button grey again (stylesheet)
+grey = ("QPushButton {"
+         "color: #333;"
+         "border: 2px solid #555;"
+         "border-radius: 40px;"
+         "border-style: outset;"
+         "background: qradialgradient("
+            "cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,"
+            "radius: 1.35, stop: 0 #fff, stop: 1 #888"
+            ");"
+         "padding: 5px;"
+        "}"
+
+        "QPushButton:hover {"
+         "background: qradialgradient("
+            "cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,"
+            "radius: 1.35, stop: 0 #fff, stop: 1 #bbb"
+         ");"
+        "}"
+
+        "QPushButton:pressed {"
+         "border-style: inset;"
+         "background: qradialgradient("
+             "cx: 0.4, cy: -0.1, fx: 0.4, fy: -0.1,"
+             "radius: 1.35, stop: 0 #fff, stop: 1 #ddd"
+         ");"
+        "}"
+)
 #import pysnooper
 #@pysnooper.snoop
 
@@ -168,6 +223,12 @@ class AboutDialog(QtUtilsMixIn, QtWidgets.QDialog):
 
         self.app = qt_app
 
+class SetupWizard(QtUtilsMixIn, QtWidgets.QWizard):
+    def __init__(self, qt_app: QtWidgets.QApplication):
+        QtWidgets.QWizard.__init__(self)
+        QtUtilsMixIn.__init__(self)
+
+        self.app = qt_app
 
 ##### @fixme: PINDialog should be modal!
 class PINDialog(QtUtilsMixIn, QtWidgets.QDialog):
@@ -290,13 +351,16 @@ class GUI(QtUtilsMixIn, QtWidgets.QMainWindow):
 
         self.about_dialog = AboutDialog(qt_app)
         self.about_dialog.load_ui(ui_dir / "aboutdialog.ui", self.about_dialog)
-        self.about_dialog.show()
-
+        
+        self.setup_wizard = SetupWizard(qt_app)
+        self.setup_wizard.load_ui(ui_dir / "setup-wizard.ui", self.setup_wizard)
 
 
 
         ################################################################################
         #### get widget objects
+        ## wizard
+        
         ## app wide widgets
         self.status_bar = _get(_qt.QStatusBar, "statusBar")
         self.menu_bar = _get(_qt.QMenuBar, "menuBar")
@@ -306,13 +370,20 @@ class GUI(QtUtilsMixIn, QtWidgets.QMainWindow):
         self.tab_otp_gen = _get(_qt.QWidget, "tab_2")
         self.tab_pws = _get(_qt.QWidget, "tab_3")
         self.tab_settings = _get(_qt.QWidget, "tab_4")
-
-        ## overview buttons
-        self.quit_button = _get(_qt.QPushButton, "btn_dial_quit")
+        self.tab_fido2 = _get(_qt.QWidget, "tab_6")
+        self.tab_storage = _get(_qt.QWidget, "tab_7")
+        self.about_button = _get(_qt.QPushButton, "btn_about")
         self.help_btn = _get(_qt.QPushButton, "btn_dial_help")
+        self.quit_button = _get(_qt.QPushButton, "btn_dial_quit") 
         self.lock_btn = _get(_qt.QPushButton, "btn_dial_lock")
+        self.pro_btn =  _get(_qt.QPushButton, "pushButton_pro")
+        self.storage_btn =  _get(_qt.QPushButton, "pushButton_storage")
+        self.fido2_btn =  _get(_qt.QPushButton, "pushButton_fido2")
+        ## overview buttons
         self.unlock_pws_btn = _get(_qt.QPushButton, "btn_dial_PWS")
-
+        ## FIDO2
+        self.add_btn = _get(_qt.QPushButton, "pushButton_add")
+        self.table_fido2 = _get(_qt.QTableWidget, "Table_fido2")
         # OTP widgets
         self.radio_hotp = _get(_qt.QRadioButton, "radioButton")
         self.radio_totp = _get(_qt.QRadioButton, "radioButton_2")
@@ -329,7 +400,7 @@ class GUI(QtUtilsMixIn, QtWidgets.QMainWindow):
         self.otp_gen_secret_btn = _get(_qt.QPushButton, "randomSecretButton")
         self.otp_gen_secret_clipboard_btn = _get(_qt.QPushButton, "btn_copyToClipboard")
         self.otp_gen_secret_hide = _get(_qt.QCheckBox, "checkBox")
-
+        self.otp_information_hide = _get(_qt.QCheckBox, "checkBox_2")
         ################################################################################
         # set some props, initial enabled/visible, finally show()
         self.setAttribute(Qt.WA_DeleteOnClose)
@@ -348,7 +419,10 @@ class GUI(QtUtilsMixIn, QtWidgets.QMainWindow):
         self.quit_button.clicked.connect(self.slot_quit_button_pressed)
         self.lock_btn.clicked.connect(self.slot_lock_button_pressed)
         self.unlock_pws_btn.clicked.connect(self.unlock_pws_button_pressed)
-
+        self.about_button.clicked.connect(self.about_button_pressed)
+        self.pro_btn.clicked.connect(self.pro_btn_pressed)
+        self.storage_btn.clicked.connect(self.storage_btn_pressed)
+        self.fido2_btn.clicked.connect(self.fido2_btn_pressed)
         ################################################################################
         #### connections for functional signals
         ## generic / global
@@ -358,6 +432,9 @@ class GUI(QtUtilsMixIn, QtWidgets.QMainWindow):
         self.sig_status_upd.connect(self.update_status_bar)
         self.sig_disconnected.connect(self.init_gui)
 
+        ## fido2 stuff
+
+        self.add_btn.clicked.connect(self.add_table)
         ## otp stuff
         self.radio_totp.toggled.connect(self.slot_toggle_otp)
         self.radio_hotp.toggled.connect(self.slot_toggle_otp)
@@ -372,7 +449,7 @@ class GUI(QtUtilsMixIn, QtWidgets.QMainWindow):
 
         self.otp_gen_secret_btn.clicked.connect(self.slot_random_secret)
         self.otp_gen_secret_hide.stateChanged.connect(self.slot_secret_hide)
-
+        self.otp_information_hide.stateChanged.connect(self.slot_info_hide)
         ## auth related
         self.sig_ask_pin.connect(self.pin_dialog.invoke)
         self.sig_auth.connect(self.slot_auth)
@@ -407,6 +484,14 @@ class GUI(QtUtilsMixIn, QtWidgets.QMainWindow):
         what = what if isinstance(what, dict) else {"msg": what}
         self.sig_status_upd.emit(what)
 
+    #### FIDO2 related callbacks
+
+    @pyqtSlot()
+    def add_table(self):
+        self.table_fido2.setItem(0 , 0, (QtWidgets.QTableWidgetItem("text1")))
+        self.table_fido2.setItem(0 , 1, (QtWidgets.QTableWidgetItem("text2")))
+        self.table_fido2.setItem(0 , 2, (QtWidgets.QTableWidgetItem("text3")))
+        self.table_fido2.setItem(0 , 3, (QtWidgets.QTableWidgetItem("text4")))
     #### OTP related callbacks
     @pyqtSlot()
     def slot_random_secret(self):
@@ -532,6 +617,12 @@ class GUI(QtUtilsMixIn, QtWidgets.QMainWindow):
         elif state == 0:
             self.otp_secret.setEchoMode(QtWidgets.QLineEdit.Normal)
 
+    @pyqtSlot(int)
+    def slot_info_hide(self, state):
+        if state == 2:
+            self.set_visible(QtWidgets.QLabel, ["frame_2"] , True)
+        elif state == 0:
+            self.set_visible(QtWidgets.QLabel, ["frame_2"] , False)
     @pyqtSlot(str)
     def slot_confirm_auth(self, who):
         self.unlock_pws_btn.setEnabled(False)
@@ -567,7 +658,7 @@ class GUI(QtUtilsMixIn, QtWidgets.QMainWindow):
     def init_gui(self):
         self.init_overview()
         self.init_otp_conf()
-        self.init_otp_general()
+        """self.init_otp_general()"""
         self.init_pws()
 
     @pyqtSlot()
@@ -662,6 +753,32 @@ class GUI(QtUtilsMixIn, QtWidgets.QMainWindow):
 
     #### main-window callbacks
     @pyqtSlot()
+    def pro_btn_pressed(self):
+        self.tabs.setTabEnabled(4, False)
+        self.tabs.setTabEnabled(5, False)
+        self.pro_btn.setStyleSheet(green)
+        self.storage_btn.setStyleSheet(grey)
+        self.fido2_btn.setStyleSheet(grey)
+    @pyqtSlot()
+    def storage_btn_pressed(self):
+        self.tabs.setTabEnabled(4, True)
+        self.tabs.setTabEnabled(5, False)
+        self.pro_btn.setStyleSheet(grey)
+        self.storage_btn.setStyleSheet(green)
+        self.fido2_btn.setStyleSheet(grey)
+    @pyqtSlot()
+    def fido2_btn_pressed(self):
+        self.tabs.setTabEnabled(4, False)
+        self.tabs.setTabEnabled(5, True)
+        self.pro_btn.setStyleSheet(grey)
+        self.storage_btn.setStyleSheet(grey)
+        self.fido2_btn.setStyleSheet(green)
+    @pyqtSlot()
+    def about_button_pressed(self):
+        self.about_dialog.show()
+        ##test
+        self.setup_wizard.show()
+    @pyqtSlot()
     def slot_quit_button_pressed(self):
         self.backend_thread.stop_loop()
         self.backend_thread.wait()
@@ -708,11 +825,11 @@ class GUI(QtUtilsMixIn, QtWidgets.QMainWindow):
         self.radio_totp.setChecked(True)
         self.radio_hotp.setChecked(False)
 
-    @pyqtSlot()
+    """@pyqtSlot()
     def init_otp_general(self):
         self.set_enabled(QtWidgets.QFrame, ["frame_4"], False)
         names = ["generalCancelButton", "writeGeneralConfigButton"]
-        self.set_enabled(QtWidgets.QPushButton, names, False)
+        self.set_enabled(QtWidgets.QPushButton, names, False)"""
 
     @pyqtSlot()
     def init_pws(self):

@@ -19,6 +19,7 @@
     <file alias="cppcodec">LICENSES/MIT</file>
   </qresource>
   <qresource prefix="/">
+    <file>images/new/icon_Logo_App_small.svg</file>
     <file>images/splash.png</file>
     <file>images/new/icon_about_nitrokey.svg</file>
     <file>images/new/icon_fragezeichen.svg</file>
