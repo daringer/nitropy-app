@@ -44,7 +44,7 @@ green = ("QPushButton {"
          ");"
         "}"
 )
-####make button grey again (stylesheet)
+####make button grey (again) (stylesheet)
 grey = ("QPushButton {"
          "color: #333;"
          "border: 2px solid #555;"
@@ -230,12 +230,33 @@ class SetupWizard(QtUtilsMixIn, QtWidgets.QWizard):
 
         self.app = qt_app
 
+class InsertNitrokey(QtUtilsMixIn, QtWidgets.QDialog):
+    def __init__(self, qt_app: QtWidgets.QApplication):
+        QtWidgets.QDialog.__init__(self)
+        QtUtilsMixIn.__init__(self)
+        ui_dir = Path(__file__).parent.resolve().absolute() / "ui"
+        self.app = qt_app
+        self.ok_insert = None
+        self.setup_wizard = SetupWizard(qt_app)
+        self.setup_wizard.load_ui(ui_dir / "setup-wizard.ui", self.setup_wizard)
+    def init_insertNitrokey(self):
+        ## dialogs
+        self.ok_insert = self.get_widget(QtWidgets.QPushButton, "pushButton_ok_insert")
+         ## insert Nitrokey
+        self.ok_insert.clicked.connect(self.ok_insert_btn)
+            #### insert Nitrokey
+    @pyqtSlot()
+    def ok_insert_btn(self):
+        self.hide()
+        
+        self.setup_wizard.show()
+    #### PWS related callbacks
+
 ##### @fixme: PINDialog should be modal!
 class PINDialog(QtUtilsMixIn, QtWidgets.QDialog):
     def __init__(self, qt_app: QtWidgets.QApplication):
         QtWidgets.QDialog.__init__(self)
         QtUtilsMixIn.__init__(self)
-
         self.app = qt_app
 
         self.checkbox, self.ok_btn, self.line_edit = None, None, None
@@ -333,16 +354,14 @@ class GUI(QtUtilsMixIn, QtWidgets.QMainWindow):
         # load UI-files and prepare them accordingly
         ui_dir = Path(__file__).parent.resolve().absolute() / "ui"
         ui_files = {
-            "main": (ui_dir / "mainwindow.ui").as_posix(),
+            "main": (ui_dir / "mainwindow_alternative.ui").as_posix(),
             "pin": (ui_dir / "pindialog.ui").as_posix()
         }
 
         self.load_ui(ui_files["main"], self)
-
         self.pin_dialog = PINDialog(qt_app)
         self.pin_dialog.load_ui(ui_files["pin"], self.pin_dialog)
         self.pin_dialog.init_gui()
-
         _get = self.get_widget
         _qt = QtWidgets
 
@@ -355,10 +374,13 @@ class GUI(QtUtilsMixIn, QtWidgets.QMainWindow):
         self.setup_wizard = SetupWizard(qt_app)
         self.setup_wizard.load_ui(ui_dir / "setup-wizard.ui", self.setup_wizard)
 
-
+        self.insert_Nitrokey = InsertNitrokey(qt_app)
+        self.insert_Nitrokey.load_ui(ui_dir / "insert_Nitrokey.ui", self.insert_Nitrokey)
+        self.insert_Nitrokey.init_insertNitrokey()
 
         ################################################################################
         #### get widget objects
+        
         ## wizard
         
         ## app wide widgets
@@ -379,8 +401,21 @@ class GUI(QtUtilsMixIn, QtWidgets.QMainWindow):
         self.pro_btn =  _get(_qt.QPushButton, "pushButton_pro")
         self.storage_btn =  _get(_qt.QPushButton, "pushButton_storage")
         self.fido2_btn =  _get(_qt.QPushButton, "pushButton_fido2")
-        ## overview buttons
-        self.unlock_pws_btn = _get(_qt.QPushButton, "btn_dial_PWS")
+        ## overview 
+        self.unlock_pws_btn = _get(_qt.QPushButton, "PWS_ButtonEnable")
+        self.frame_p = _get(_qt.QFrame, "frame_pro")
+        self.frame_s = _get(_qt.QFrame, "frame_storage")
+        self.frame_f = _get(_qt.QFrame, "frame_fido2")
+        ## PWS
+        self.groupbox_pw = _get(_qt.QFrame, "groupbox_pw")
+        self.table_pws = _get(_qt.QTableWidget, "Table_pws")
+        self.pws_editslotname = _get(_qt.QLineEdit, "PWS_EditSlotName")
+        self.pws_editloginname = _get(_qt.QLineEdit, "PWS_EditLoginName")
+        self.pws_editpassword = _get(_qt.QLineEdit, "PWS_EditPassword")
+        self.add_pws_btn = _get(_qt.QPushButton, "PWS_ButtonAdd")
+        self.delete_pws_btn = _get(_qt.QPushButton, "PWS_ButtonDelete")
+        self.cancel_pws_btn_2 = _get(_qt.QPushButton, "PWS_ButtonClose")
+        self.add_table_pws_btn = _get(_qt.QPushButton, "PWS_ButtonSaveSlot")
         ## FIDO2
         self.add_btn = _get(_qt.QPushButton, "pushButton_add")
         self.table_fido2 = _get(_qt.QTableWidget, "Table_fido2")
@@ -400,7 +435,7 @@ class GUI(QtUtilsMixIn, QtWidgets.QMainWindow):
         self.otp_gen_secret_btn = _get(_qt.QPushButton, "randomSecretButton")
         self.otp_gen_secret_clipboard_btn = _get(_qt.QPushButton, "btn_copyToClipboard")
         self.otp_gen_secret_hide = _get(_qt.QCheckBox, "checkBox")
-        self.otp_information_hide = _get(_qt.QCheckBox, "checkBox_2")
+        self.otp_information_hide = _get(_qt.QPushButton, "advancedSettings")
         ################################################################################
         # set some props, initial enabled/visible, finally show()
         self.setAttribute(Qt.WA_DeleteOnClose)
@@ -431,10 +466,15 @@ class GUI(QtUtilsMixIn, QtWidgets.QMainWindow):
 
         self.sig_status_upd.connect(self.update_status_bar)
         self.sig_disconnected.connect(self.init_gui)
-
+        ## pws stuff
+        self.table_pws.cellClicked.connect(self.table_pws_function)
+        self.add_pws_btn.clicked.connect(self.add_pws)
+        self.add_table_pws_btn.clicked.connect(self.add_table_pws)
+        self.cancel_pws_btn_2.clicked.connect(self.cancel_pws_2)
+        self.delete_pws_btn.clicked.connect(self.delete_pws)
         ## fido2 stuff
 
-        self.add_btn.clicked.connect(self.add_table)
+        self.add_btn.clicked.connect(self.add_table_fido2)
         ## otp stuff
         self.radio_totp.toggled.connect(self.slot_toggle_otp)
         self.radio_hotp.toggled.connect(self.slot_toggle_otp)
@@ -449,7 +489,7 @@ class GUI(QtUtilsMixIn, QtWidgets.QMainWindow):
 
         self.otp_gen_secret_btn.clicked.connect(self.slot_random_secret)
         self.otp_gen_secret_hide.stateChanged.connect(self.slot_secret_hide)
-        self.otp_information_hide.stateChanged.connect(self.slot_info_hide)
+        self.otp_information_hide.clicked.connect(self.slot_info_hide)
         ## auth related
         self.sig_ask_pin.connect(self.pin_dialog.invoke)
         self.sig_auth.connect(self.slot_auth)
@@ -484,14 +524,55 @@ class GUI(QtUtilsMixIn, QtWidgets.QMainWindow):
         what = what if isinstance(what, dict) else {"msg": what}
         self.sig_status_upd.emit(what)
 
+
+    @pyqtSlot()
+    def table_pws_function(self):
+        index=(self.table_pws.currentIndex())
+        item = self.table_pws.item(index.row(), index.column())
+        item2 = self.table_pws.item(index.row(), index.column()+1)
+        item3 = self.table_pws.item(index.row(), index.column()+2)
+        print(index.row(), index.column())
+        print(item.text())
+        self.pws_editslotname.setText(item.text())
+        self.pws_editloginname.setText(item2.text())
+        self.pws_editpassword.setText(item3.text())
+    def add_table_pws(self):
+        row = self.table_pws.rowCount()
+        self.table_pws.insertRow(row)
+        # self.table_pws.setItem(row , 0, (QtWidgets.QTableWidgetItem("Name")))
+        # self.table_pws.setItem(row , 1, (QtWidgets.QTableWidgetItem("Username")))
+        index=(self.table_pws.currentIndex())
+        qline = self.pws_editslotname.text()
+        qline2 = self.pws_editloginname.text()
+        qline3 = self.pws_editpassword.text()
+        print(index.row())
+        res = "{} {} {}".format(qline, "\n", qline2)
+        self.table_pws.setItem(row , 0, (QtWidgets.QTableWidgetItem(res)))
+        self.table_pws.setItem(row , 1, (QtWidgets.QTableWidgetItem(qline2)))
+        self.table_pws.setItem(row , 2, (QtWidgets.QTableWidgetItem(qline3)))
+    def add_pws(self):
+        self.set_visible(QtWidgets.QFrame, ["groupbox_pw"], True)
+        self.set_enabled(QtWidgets.QFrame, ["groupbox_pw"], True)
+        self.set_enabled(QtWidgets.QPushButton, ["PWS_ButtonSaveSlot", "PWS_ButtonClose"], True)
+        self.pws_editslotname.setText("")
+        self.pws_editloginname.setText("")
+        self.pws_editpassword.setText("")
+    def delete_pws(self):
+        self.set_visible(QtWidgets.QFrame, ["groupbox_pw"], False)
+    def cancel_pws_2(self):
+        self.set_visible(QtWidgets.QFrame, ["groupbox_pw"], False)
+        self.set_enabled(QtWidgets.QFrame, ["groupbox_pw"], False)
+        self.set_enabled(QtWidgets.QPushButton, ["PWS_ButtonSaveSlot", "PWS_ButtonClose"], False)
     #### FIDO2 related callbacks
 
     @pyqtSlot()
-    def add_table(self):
-        self.table_fido2.setItem(0 , 0, (QtWidgets.QTableWidgetItem("text1")))
-        self.table_fido2.setItem(0 , 1, (QtWidgets.QTableWidgetItem("text2")))
-        self.table_fido2.setItem(0 , 2, (QtWidgets.QTableWidgetItem("text3")))
-        self.table_fido2.setItem(0 , 3, (QtWidgets.QTableWidgetItem("text4")))
+    def add_table_fido2(self):
+        row = self.table_fido2.rowCount()
+        self.table_fido2.insertRow(row)
+        self.table_fido2.setItem(row , 0, (QtWidgets.QTableWidgetItem("text1")))
+        self.table_fido2.setItem(row , 1, (QtWidgets.QTableWidgetItem("text2")))
+        self.table_fido2.setItem(row , 2, (QtWidgets.QTableWidgetItem("text3")))
+        self.table_fido2.setItem(row , 3, (QtWidgets.QTableWidgetItem("text4")))
     #### OTP related callbacks
     @pyqtSlot()
     def slot_random_secret(self):
@@ -617,12 +698,17 @@ class GUI(QtUtilsMixIn, QtWidgets.QMainWindow):
         elif state == 0:
             self.otp_secret.setEchoMode(QtWidgets.QLineEdit.Normal)
 
-    @pyqtSlot(int)
-    def slot_info_hide(self, state):
-        if state == 2:
-            self.set_visible(QtWidgets.QLabel, ["frame_2"] , True)
-        elif state == 0:
-            self.set_visible(QtWidgets.QLabel, ["frame_2"] , False)
+    @pyqtSlot()
+    def slot_info_hide(self):
+        if self.otp_information_hide.isChecked():
+            self.set_visible(QtWidgets.QLabel, ["groupbox_parameters"] , True)
+            self.set_visible(QtWidgets.QLabel, ["groupbox_manageslots"] , True)
+            self.set_visible(QtWidgets.QLabel, ["groupbox_pw"] , False)
+
+        else:
+            self.set_visible(QtWidgets.QLabel, ["groupbox_parameters"] , False)
+            self.set_visible(QtWidgets.QLabel, ["groupbox_manageslots"] , False)
+            self.set_visible(QtWidgets.QLabel, ["groupbox_pw"] , True)
     @pyqtSlot(str)
     def slot_confirm_auth(self, who):
         self.unlock_pws_btn.setEnabled(False)
@@ -656,7 +742,6 @@ class GUI(QtUtilsMixIn, QtWidgets.QMainWindow):
 
     @pyqtSlot()
     def init_gui(self):
-        self.init_overview()
         self.init_otp_conf()
         """self.init_otp_general()"""
         self.init_pws()
@@ -734,9 +819,9 @@ class GUI(QtUtilsMixIn, QtWidgets.QMainWindow):
         # enable and show needed widgets
         func = lambda w: (w.setEnabled(True), w.setVisible(True))
         self.apply_by_name(["btn_dial_PWS", "btn_dial_lock",    # overview
-                            "frame", "frame_8", "frame_2",      # otp
+                            #"frame", #"groupbox_manageslots", "groupbox_parameters",      # otp
                             #"frame_4",                         # otp config
-                            #"frame_7"                          # pws
+                            #"groupbox_pw"                          # pws
                            ], func)
 
         if info["model"] == nk_api.DeviceModel.NK_STORAGE:
@@ -754,30 +839,48 @@ class GUI(QtUtilsMixIn, QtWidgets.QMainWindow):
     #### main-window callbacks
     @pyqtSlot()
     def pro_btn_pressed(self):
+        self.tabs.setTabEnabled(1, True)
+        self.tabs.setTabEnabled(2, True)
+        self.tabs.setTabEnabled(3, True)
         self.tabs.setTabEnabled(4, False)
         self.tabs.setTabEnabled(5, False)
+        # set stylesheet of tabwidget to QTabBar::tab:disabled { width: 0; height: 0; margin: 0; padding: 0; border: none; } if you want to make the tabs invisible.
         self.pro_btn.setStyleSheet(green)
         self.storage_btn.setStyleSheet(grey)
         self.fido2_btn.setStyleSheet(grey)
+        self.frame_s.setVisible(False)
+        self.frame_f.setVisible(False)
+        self.frame_p.setVisible(True)
     @pyqtSlot()
     def storage_btn_pressed(self):
+        self.tabs.setTabEnabled(1, True)
+        self.tabs.setTabEnabled(2, True)
+        self.tabs.setTabEnabled(3, True)
         self.tabs.setTabEnabled(4, True)
         self.tabs.setTabEnabled(5, False)
         self.pro_btn.setStyleSheet(grey)
         self.storage_btn.setStyleSheet(green)
         self.fido2_btn.setStyleSheet(grey)
+        self.frame_s.setVisible(True)
+        self.frame_f.setVisible(False)
+        self.frame_p.setVisible(False)
     @pyqtSlot()
     def fido2_btn_pressed(self):
+        self.tabs.setTabEnabled(1, False)
+        self.tabs.setTabEnabled(2, False)
+        self.tabs.setTabEnabled(3, False)
         self.tabs.setTabEnabled(4, False)
         self.tabs.setTabEnabled(5, True)
         self.pro_btn.setStyleSheet(grey)
         self.storage_btn.setStyleSheet(grey)
         self.fido2_btn.setStyleSheet(green)
+        self.frame_s.setVisible(False)
+        self.frame_f.setVisible(True)
+        self.frame_p.setVisible(False)
     @pyqtSlot()
     def about_button_pressed(self):
         self.about_dialog.show()
         ##test
-        self.setup_wizard.show()
     @pyqtSlot()
     def slot_quit_button_pressed(self):
         self.backend_thread.stop_loop()
@@ -813,7 +916,7 @@ class GUI(QtUtilsMixIn, QtWidgets.QMainWindow):
 
     @pyqtSlot()
     def init_otp_conf(self):
-        self.set_enabled(QtWidgets.QFrame, ["frame", "frame_8", "frame_2"], False)
+        self.set_enabled(QtWidgets.QGroupBox, ["groupbox_pw", "groupbox_manageslots", "groupbox_parameters"], False)
         self.set_enabled(QtWidgets.QPushButton, ["writeButton", "cancelButton"], False)
         btns = ["setToRandomButton", "setToZeroButton"]
         self.set_visible(QtWidgets.QPushButton, btns, False)
@@ -821,10 +924,10 @@ class GUI(QtUtilsMixIn, QtWidgets.QMainWindow):
         self.set_visible(QtWidgets.QLabel, lbls , False)
         self.set_visible(QtWidgets.QProgressBar, ["progressBar"], False)
         self.set_visible(QtWidgets.QLineEdit, ["counterEdit"], False)
-
+        self.insert_Nitrokey.show()
         self.radio_totp.setChecked(True)
         self.radio_hotp.setChecked(False)
-
+        self.set_visible(QtWidgets.QFrame, ["groupbox_manageslots", "groupbox_parameters"], False)
     """@pyqtSlot()
     def init_otp_general(self):
         self.set_enabled(QtWidgets.QFrame, ["frame_4"], False)
@@ -834,12 +937,13 @@ class GUI(QtUtilsMixIn, QtWidgets.QMainWindow):
     @pyqtSlot()
     def init_pws(self):
         btn_cls = QtWidgets.QPushButton
-        self.set_enabled(QtWidgets.QFrame, ["frame_7"], False)
+        self.set_visible(QtWidgets.QFrame, ["groupbox_pw"], False)
+        self.set_enabled(QtWidgets.QFrame, ["groupbox_pw"], False)
         self.set_visible(btn_cls, ["PWS_Lock"], False)
         self.set_visible(QtWidgets.QProgressBar, ["PWS_progressBar"], False)
         names = ["PWS_ButtonEnable", "PWS_ButtonSaveSlot", "PWS_ButtonClose"]
         self.set_enabled(btn_cls, names, False)
-        self.set_enabled(QtWidgets.QLabel, ["l_utf8_info"], False)
+        #self.set_enabled(QtWidgets.QLabel, ["l_utf8_info"], False)
 
 
 def main():
