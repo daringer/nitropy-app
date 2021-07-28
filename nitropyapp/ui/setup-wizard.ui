@@ -69,7 +69,7 @@
        </font>
       </property>
       <property name="text">
-       <string>Note: In the future you can change the PIN's in the device settings.</string>
+       <string>Your PINs can also be changed later again.</string>
       </property>
       <property name="wordWrap">
        <bool>true</bool>
@@ -143,7 +143,7 @@
       <property name="text">
        <string>The Nitrokey is protected by a User PIN, 
 only 3 entries are possible until the device is locked. 
-choose a User PIN between 6-20 characters. 
+Choose a User PIN between 6-20 characters. 
 </string>
       </property>
      </widget>
