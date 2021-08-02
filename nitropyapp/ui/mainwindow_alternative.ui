@@ -555,7 +555,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>3</number>
       </property>
       <property name="elideMode">
        <enum>Qt::ElideNone</enum>
@@ -718,7 +718,7 @@ as you may damage data in the process!</string>
               <string notr="true">#upLeft { background-color: transparent; border-image: url(:/images/new/icon_safe.svg); background: none; border: none; background-repeat: none; }</string>
              </property>
              <property name="text">
-              <string>Unlock Hidden Volume</string>
+              <string>Create Hidden Volume</string>
              </property>
              <property name="icon">
               <iconset resource="resources.qrc">
@@ -1332,9 +1332,9 @@ as you may damage data in the process!</string>
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-480</y>
+             <y>0</y>
              <width>734</width>
-             <height>1110</height>
+             <height>1120</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -1397,13 +1397,6 @@ Text-align:left;
                <property name="rightMargin">
                 <number>9</number>
                </property>
-               <item row="1" column="0">
-                <widget class="QLineEdit" name="PWS_EditSlotName">
-                 <property name="accessibleName">
-                  <string>Slot name:</string>
-                 </property>
-                </widget>
-               </item>
                <item row="5" column="1">
                 <widget class="QCheckBox" name="show_hide">
                  <property name="text">
@@ -1414,10 +1407,10 @@ Text-align:left;
                  </property>
                 </widget>
                </item>
-               <item row="4" column="0">
-                <widget class="QLabel" name="label_19">
+               <item row="7" column="3">
+                <widget class="QPushButton" name="pushButton_4">
                  <property name="text">
-                  <string>Password</string>
+                  <string>QR-Code</string>
                  </property>
                 </widget>
                </item>
@@ -1428,17 +1421,26 @@ Text-align:left;
                  </property>
                 </widget>
                </item>
-               <item row="3" column="0">
-                <widget class="QLineEdit" name="PWS_EditLoginName">
-                 <property name="accessibleName">
-                  <string>Login name:</string>
+               <item row="1" column="6">
+                <widget class="QPushButton" name="copy_1">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string>Copy</string>
+                 </property>
+                 <property name="checkable">
+                  <bool>false</bool>
                  </property>
                 </widget>
                </item>
-               <item row="6" column="0">
-                <widget class="QLabel" name="label_22">
+               <item row="7" column="5">
+                <widget class="QPushButton" name="pushButton_7">
                  <property name="text">
-                  <string>OTP</string>
+                  <string>Random</string>
                  </property>
                 </widget>
                </item>
@@ -1449,14 +1451,68 @@ Text-align:left;
                  </property>
                 </widget>
                </item>
-               <item row="5" column="3">
-                <widget class="QPushButton" name="pushButton_11">
+               <item row="6" column="0">
+                <widget class="QLabel" name="label_22">
                  <property name="text">
-                  <string>Random</string>
+                  <string>Secret (for OTP)</string>
                  </property>
                 </widget>
                </item>
-               <item row="5" column="4" alignment="Qt::AlignRight">
+               <item row="2" column="0">
+                <widget class="QLabel" name="label_18">
+                 <property name="text">
+                  <string>Username</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="7" column="6">
+                <widget class="QPushButton" name="copy_4">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string>Copy</string>
+                 </property>
+                 <property name="checkable">
+                  <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="0">
+                <widget class="QLineEdit" name="PWS_EditLoginName">
+                 <property name="accessibleName">
+                  <string>Login name:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="0">
+                <widget class="QLabel" name="label_19">
+                 <property name="text">
+                  <string>Password</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="7" column="1">
+                <widget class="QCheckBox" name="show_hide_2">
+                 <property name="text">
+                  <string>Hide</string>
+                 </property>
+                 <property name="checkable">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLineEdit" name="PWS_EditSlotName">
+                 <property name="accessibleName">
+                  <string>Slot name:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="5" column="6" alignment="Qt::AlignRight">
                 <widget class="QPushButton" name="copy_3">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -1475,64 +1531,8 @@ Text-align:left;
                  </property>
                 </widget>
                </item>
-               <item row="7" column="3">
-                <widget class="QPushButton" name="pushButton_13">
-                 <property name="text">
-                  <string>Random</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="0">
-                <widget class="QLabel" name="label_18">
-                 <property name="text">
-                  <string>Username</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="4">
+               <item row="3" column="6">
                 <widget class="QPushButton" name="copy_2">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="text">
-                  <string>Copy</string>
-                 </property>
-                 <property name="checkable">
-                  <bool>false</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="7" column="4">
-                <widget class="QPushButton" name="copy_4">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="text">
-                  <string>Copy</string>
-                 </property>
-                 <property name="checkable">
-                  <bool>false</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="7" column="1">
-                <widget class="QCheckBox" name="show_hide_2">
-                 <property name="text">
-                  <string>Hide</string>
-                 </property>
-                 <property name="checkable">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="4">
-                <widget class="QPushButton" name="copy_1">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -1550,10 +1550,17 @@ Text-align:left;
                <item row="7" column="0">
                 <widget class="QLineEdit" name="PWS_EditOTP"/>
                </item>
-               <item row="7" column="2">
-                <widget class="QPushButton" name="pushButton_4">
+               <item row="5" column="5">
+                <widget class="QPushButton" name="pushButton_11">
                  <property name="text">
-                  <string>QR-Code</string>
+                  <string>Random</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="7" column="4" alignment="Qt::AlignRight">
+                <widget class="QPushButton" name="pushButton_otp_copy">
+                 <property name="text">
+                  <string>OTP</string>
                  </property>
                 </widget>
                </item>
@@ -1580,13 +1587,18 @@ Text-align:left;
                 <height>16777215</height>
                </size>
               </property>
+              <property name="font">
+               <font>
+                <pointsize>14</pointsize>
+               </font>
+              </property>
               <property name="styleSheet">
                <string notr="true">QPushButton {
 Text-align:left;
 }</string>
               </property>
               <property name="text">
-               <string>Secret key</string>
+               <string>Secret</string>
               </property>
               <property name="icon">
                <iconset>
@@ -1941,13 +1953,18 @@ Text-align:left;
                 <height>16777215</height>
                </size>
               </property>
+              <property name="font">
+               <font>
+                <pointsize>14</pointsize>
+               </font>
+              </property>
               <property name="styleSheet">
                <string notr="true">QPushButton {
 Text-align:left;
 }</string>
               </property>
               <property name="text">
-               <string>Parameter</string>
+               <string>OTP Parameter</string>
               </property>
               <property name="icon">
                <iconset>
@@ -2372,7 +2389,7 @@ Text-align:left;
             </property>
             <widget class="QWidget" name="tab_10">
              <attribute name="title">
-              <string>1. Key Pair</string>
+              <string>1. Key Identity</string>
              </attribute>
              <layout class="QGridLayout" name="gridLayout_12">
               <item row="3" column="1">
@@ -2455,7 +2472,7 @@ Text-align:left;
               <item row="3" column="0">
                <widget class="QPushButton" name="pushButton_add_keys">
                 <property name="text">
-                 <string>Add Main Key</string>
+                 <string>Create Main Key</string>
                 </property>
                </widget>
               </item>
@@ -2527,13 +2544,13 @@ Text-align:left;
             </widget>
             <widget class="QWidget" name="tab_11">
              <attribute name="title">
-              <string>2. Key Pair </string>
+              <string>2. Key Identity</string>
              </attribute>
              <layout class="QGridLayout" name="gridLayout_9"/>
             </widget>
             <widget class="QWidget" name="tab">
              <attribute name="title">
-              <string>3. Key Pair</string>
+              <string>3. Key Identity</string>
              </attribute>
             </widget>
            </widget>
@@ -2544,7 +2561,7 @@ Text-align:left;
       </widget>
       <widget class="QWidget" name="tab_4">
        <attribute name="title">
-        <string>Device-Settings</string>
+        <string>Device Settings</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_6">
         <item row="0" column="0">

@@ -250,9 +250,27 @@ class SetupWizard(QtUtilsMixIn, QtWidgets.QWizard):
         self.adminpin_2 = self.get_widget(QtWidgets.QLineEdit, "lineEdit_3")
         self.adminpin_page.registerField("admin_pin_1*", self.adminpin_1)
         self.adminpin_page.registerField("admin_pin_2*", self.adminpin_2)
+
+        self.userpin_2.textChanged.connect(self.same_setup_wizard)
+        self.adminpin_2.textChanged.connect(self.same_setup_wizard_2)
+
+    def same_setup_wizard(self):
+        if self.userpin_1.text() != self.userpin_2.text():
+            print(self.userpin_1.text())
+            print(self.userpin_2.text())
+            self.button(QtWidgets.QWizard.NextButton).setEnabled(False)
+        else:
+            self.button(QtWidgets.QWizard.NextButton).setEnabled(True)
+    def same_setup_wizard_2(self):
+        if self.adminpin_1.text() != self.adminpin_2.text():
+            print(self.adminpin_1.text())
+            print(self.adminpin_2.text())
+            self.button(QtWidgets.QWizard.FinishButton).setEnabled(False)
+        else:
+            self.button(QtWidgets.QWizard.FinishButton).setEnabled(True)
     def closeEvent(self, event):
         reply = QtWidgets.QMessageBox.question(self, 'Message',
-            "Are you sure to quit?", QtWidgets.QMessageBox.Yes |
+            "Are you sure to exit?", QtWidgets.QMessageBox.Yes |
             QtWidgets.QMessageBox.No, QtWidgets.QMessageBox.No)
 
         if reply == QtWidgets.QMessageBox.Yes:
@@ -375,7 +393,13 @@ class Storage(QtUtilsMixIn, QtWidgets.QWizard):
 
         self.radio_gb.toggled.connect(self.swap_to_gb)
         self.radio_mb.toggled.connect(self.swap_to_mb)
+        self.hidden_pw_2.textChanged.connect(self.same_storage)
 
+    def same_storage(self):
+        if self.hidden_pw_2.text() != self.hidden_pw_1.text():
+            self.button(QtWidgets.QWizard.NextButton).setEnabled(False)
+        else:
+            self.button(QtWidgets.QWizard.NextButton).setEnabled(True)
     
     @pyqtSlot(int)   
     #### storage wizard
@@ -593,6 +617,7 @@ class GUI(QtUtilsMixIn, QtWidgets.QMainWindow):
         #### get widget objects
         
         ## wizard
+ 
         
         ## app wide widgets
         self.status_bar = _get(_qt.QStatusBar, "statusBar")
@@ -645,6 +670,14 @@ class GUI(QtUtilsMixIn, QtWidgets.QMainWindow):
         self.show_hide_btn = _get(_qt.QCheckBox, "show_hide")
         self.show_hide_btn_2 = _get(_qt.QCheckBox, "show_hide_2")
         self.pop_up_copy = _get(_qt.QLabel, "pop_up_copy")
+        self.copy_name = _get(_qt.QPushButton, "copy_1")
+        self.copy_username = _get(_qt.QPushButton, "copy_2")
+        self.copy_pw = _get(_qt.QPushButton, "copy_3")
+        self.copy_otp = _get(_qt.QPushButton, "copy_4")
+        self.copy_current_otp = _get(_qt.QPushButton, "pushButton_otp_copy")
+        self.qr_code = _get(_qt.QPushButton, "pushButton_4")
+        self.random_otp = _get(_qt.QPushButton, "pushButton_7")
+        
         ## smartcard
         self.pushButton_add_key = _get(_qt.QPushButton, "pushButton_add_keys")
         self.main_key = _get(_qt.QGroupBox, "groupBox_mainkey")
@@ -710,7 +743,6 @@ class GUI(QtUtilsMixIn, QtWidgets.QMainWindow):
         self.setup_wizard.button(QtWidgets.QWizard.FinishButton).clicked.connect(self.init_pin_setup)
         ## setup
         self.storage.button(QtWidgets.QWizard.FinishButton).clicked.connect(self.init_storage_setup)
-
         ## smart card
         self.pushButton_add_key.clicked.connect(self.add_key)
         self.key_generation.button(QtWidgets.QWizard.FinishButton).clicked.connect(self.loading)
@@ -721,7 +753,12 @@ class GUI(QtUtilsMixIn, QtWidgets.QMainWindow):
         self.cancel_pws_btn_2.clicked.connect(self.cancel_pws_2)
         self.delete_pws_btn.clicked.connect(self.delete_pws)
         self.ButtonChangeSlot.clicked.connect(self.change_pws)
-        ## groupboxes pws
+
+        self.copy_name.clicked.connect(self.copyname)
+        self.copy_username.clicked.connect(self.copyusername)
+        self.copy_pw.clicked.connect(self.copypw)
+        self.copy_otp.clicked.connect(self.copyotp)
+        ### groupboxes pws
         self.expand_button_parameter.clicked.connect(self.groupbox_parameters_collapse)
         self.expand_button_notes.clicked.connect(self.groupbox_manageslots_collapse)
         self.expand_button_secretkey.clicked.connect(self.groupbox_secretkey_collapse)
@@ -819,7 +856,7 @@ class GUI(QtUtilsMixIn, QtWidgets.QMainWindow):
     def init_pin_setup(self):
         self.tabs.setEnabled(True)
         self.user_info("You have successfully configured the User and Admin PIN.\n These can be changed at any time in the device settings.",title ="PIN configuration was successful")
-    
+ 
     #### storage setup
     @pyqtSlot()
     def init_storage_setup(self):
@@ -849,12 +886,19 @@ class GUI(QtUtilsMixIn, QtWidgets.QMainWindow):
         self.PWS_ButtonSaveSlot.setVisible(False)
         self.ButtonChangeSlot.setVisible(True)
         self.PWS_ButtonDelete.setVisible(True)
+        ### hides the otp creation stuff
+        self.copy_current_otp.show()
+        self.qr_code.hide()
+        self.random_otp.hide()
+        self.copy_otp.hide()
+        self.pws_editOTP.setEchoMode(QtWidgets.QLineEdit.Password)
+        self.show_hide_btn_2.hide()
     def add_table_pws(self):
         row = self.table_pws.rowCount()
         self.table_pws.insertRow(row)
         # self.table_pws.setItem(row , 0, (QtWidgets.QTableWidgetItem("Name")))
         # self.table_pws.setItem(row , 1, (QtWidgets.QTableWidgetItem("Username")))
-        
+
         index = (self.table_pws.currentIndex())
         qline = self.pws_editslotname.text()
         qline2 = self.pws_editloginname.text()
@@ -874,7 +918,7 @@ class GUI(QtUtilsMixIn, QtWidgets.QMainWindow):
                 layout.setContentsMargins(0,0,0,0)
                 layout.setSpacing(0)
 
-                Copy = QtWidgets.QPushButton('Copy')
+                Copy = QtWidgets.QPushButton('Icon')
                 Copy.setFixedSize(65,65)
                 Copy.clicked.connect(self.copy_to_clipboard_function)
                 layout.addWidget(Copy)
@@ -932,6 +976,14 @@ class GUI(QtUtilsMixIn, QtWidgets.QMainWindow):
         self.pws_editpassword.setText("")
         self.pws_editOTP.setText("")
         self.pws_editnotes.setText("")
+        ### shows the otp creation stuff again
+        self.copy_current_otp.hide()
+        self.qr_code.show()
+        self.random_otp.show()
+        self.copy_otp.show()
+        self.pws_editOTP.setEchoMode(QtWidgets.QLineEdit.Normal)
+        self.show_hide_btn_2.show()
+
     def delete_pws(self):
         index=(self.table_pws.currentIndex())
         self.table_pws.removeRow(index.row())
@@ -962,7 +1014,7 @@ class GUI(QtUtilsMixIn, QtWidgets.QMainWindow):
                 layout.setContentsMargins(0,0,0,0)
                 layout.setSpacing(0)
 
-                Copy = QtWidgets.QPushButton('Copy')
+                Copy = QtWidgets.QPushButton('Icon')
                 Copy.setFixedSize(65,65)
                 Copy.clicked.connect(self.copy_to_clipboard_function)
                 layout.addWidget(Copy)
@@ -1051,6 +1103,65 @@ class GUI(QtUtilsMixIn, QtWidgets.QMainWindow):
         elif state == 2:
             self.storage.hidden_pw_1.setEchoMode(QtWidgets.QLineEdit.Normal)
             self.storage.hidden_pw_2.setEchoMode(QtWidgets.QLineEdit.Normal)
+    @pyqtSlot()
+    def copyname(self):
+        QApplication.clipboard().setText(self.pws_editslotname.text())
+        # qtimer popup
+        self.time_to_wait = 5
+        self.pop_up_copy.setText("Data added to clipboard.") #{0} for time display
+        self.pop_up_copy.setStyleSheet("background-color: #2B5DD1; color: #FFFFFF ; border-style: outset;" 
+        "padding: 2px ; font: bold 20px ; border-width: 6px ; border-radius: 10px ; border-color: #2752B8;")
+        self.pop_up_copy.show()
+        self.timer = QTimer(self)
+        self.timer.setInterval(1000)
+        self.timer.timeout.connect(self.changeContent)
+        self.timer.start()  
+    def changeContent(self):
+        self.pop_up_copy.setText("Data added to clipboard.")
+        self.time_to_wait -= 1
+        if self.time_to_wait <= 0:
+                self.pop_up_copy.hide()
+                self.timer.stop()
+    def closeEvent(self, event):
+        self.timer.stop()
+        event.accept()
+    def copyusername(self):
+        QApplication.clipboard().setText(self.pws_editloginname.text())
+        # qtimer popup
+        self.time_to_wait = 5
+        self.pop_up_copy.setText("Data added to clipboard.") #{0} for time display
+        self.pop_up_copy.setStyleSheet("background-color: #2B5DD1; color: #FFFFFF ; border-style: outset;" 
+        "padding: 2px ; font: bold 20px ; border-width: 6px ; border-radius: 10px ; border-color: #2752B8;")
+        self.pop_up_copy.show()
+        self.timer = QTimer(self)
+        self.timer.setInterval(1000)
+        self.timer.timeout.connect(self.changeContent)
+        self.timer.start()  
+    def copypw(self):
+        QApplication.clipboard().setText(self.pws_editpassword.text())
+        # qtimer popup
+        self.time_to_wait = 5
+        self.pop_up_copy.setText("Data added to clipboard.") #{0} for time display
+        self.pop_up_copy.setStyleSheet("background-color: #2B5DD1; color: #FFFFFF ; border-style: outset;" 
+        "padding: 2px ; font: bold 20px ; border-width: 6px ; border-radius: 10px ; border-color: #2752B8;")
+        self.pop_up_copy.show()
+        self.timer = QTimer(self)
+        self.timer.setInterval(1000)
+        self.timer.timeout.connect(self.changeContent)
+        self.timer.start()  
+    def copyotp(self):
+        QApplication.clipboard().setText(self.pws_editOTP.text())
+        # qtimer popup
+        self.time_to_wait = 5
+        self.pop_up_copy.setText("Data added to clipboard.") #{0} for time display
+        self.pop_up_copy.setStyleSheet("background-color: #2B5DD1; color: #FFFFFF ; border-style: outset;" 
+        "padding: 2px ; font: bold 20px ; border-width: 6px ; border-radius: 10px ; border-color: #2752B8;")
+        self.pop_up_copy.show()
+        self.timer = QTimer(self)
+        self.timer.setInterval(1000)
+        self.timer.timeout.connect(self.changeContent)
+        self.timer.start()  
+
     #### FIDO2 related callbacks
     @pyqtSlot()
     def slot_toggle_otp_2(self):
@@ -1446,6 +1557,7 @@ class GUI(QtUtilsMixIn, QtWidgets.QMainWindow):
         self.expand_button_secret.hide()
         self.scrollArea.hide()
         self.information_label.hide()
+        self.copy_current_otp.hide()
         #self.loading_screen = LoadingScreen()
 
         self.main_key.hide()

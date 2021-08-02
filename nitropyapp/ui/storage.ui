@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>542</width>
+    <width>560</width>
     <height>456</height>
    </rect>
   </property>
@@ -232,7 +232,7 @@
        <item row="1" column="0">
         <widget class="QLabel" name="label_4">
          <property name="text">
-          <string>Password:</string>
+          <string>confirm Password:</string>
          </property>
         </widget>
        </item>
