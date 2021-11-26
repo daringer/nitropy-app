@@ -17,62 +17,7 @@ import nitropyapp.ui.breeze_resources
 #pyrcc5 -o gui_resources.py ui/resources.qrc
 import nitropyapp.gui_resources
 
-####make button green(stylesheet)
-green = ("QPushButton {"
-         "color: #333;"
-         "border: 2px solid #555;"
-         "border-radius: 40px;"
-         "border-style: outset;"
-         "background: qradialgradient("
-            "cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,"
-            "radius: 1.35, stop: 0 #fff, stop: 1 rgb(115, 210, 22)"
-            ");"
-         "padding: 5px;"
-        "}"
 
-        "QPushButton:hover {"
-         "background: qradialgradient("
-            "cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,"
-            "radius: 1.35, stop: 0 #fff, stop: 1 #bbb"
-         ");"
-        "}"
-
-        "QPushButton:pressed {"
-         "border-style: inset;"
-         "background: qradialgradient("
-             "cx: 0.4, cy: -0.1, fx: 0.4, fy: -0.1,"
-             "radius: 1.35, stop: 0 #fff, stop: 1 #ddd"
-         ");"
-        "}"
-)
-####make button grey (again) (stylesheet)
-grey = ("QPushButton {"
-         "color: #333;"
-         "border: 2px solid #555;"
-         "border-radius: 40px;"
-         "border-style: outset;"
-         "background: qradialgradient("
-            "cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,"
-            "radius: 1.35, stop: 0 #fff, stop: 1 #888"
-            ");"
-         "padding: 5px;"
-        "}"
-
-        "QPushButton:hover {"
-         "background: qradialgradient("
-            "cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,"
-            "radius: 1.35, stop: 0 #fff, stop: 1 #bbb"
-         ");"
-        "}"
-
-        "QPushButton:pressed {"
-         "border-style: inset;"
-         "background: qradialgradient("
-             "cx: 0.4, cy: -0.1, fx: 0.4, fy: -0.1,"
-             "radius: 1.35, stop: 0 #fff, stop: 1 #ddd"
-         ");"
-        "}"
-)
 #import pysnooper
 #@pysnooper.snoop
 
@@ -343,7 +288,6 @@ class Keygeneration(QtUtilsMixIn, QtWidgets.QWizard):
         print(self.confirm_path.text())
         if self.confirm_path.text():
             self.button(QtWidgets.QWizard.FinishButton).setEnabled(True)
-            #self.lastpage_keygen.cleanupPage()
 
     def adsettings_func(self):
         self.collapse(self.adsettings, self.adsettings_button)
@@ -475,7 +419,7 @@ class LoadingScreen(QtWidgets.QWidget):
     def stopAnimation(self):
         self.movie.stop()
         self.close()
-        GUI.user_info("dsfsfs","You now have a main key with the capability\n to sign and certify and a subkey for encryption.  ",title ="Key generation was successful", parent=self.label_animation)
+        GUI.user_info("success","You now have a main key with the capability\n to sign and certify and a subkey for encryption.  ",title ="Key generation was successful", parent=self.label_animation)
         
     #### PWS related callbacks
 
@@ -816,7 +760,7 @@ class GUI(QtUtilsMixIn, QtWidgets.QMainWindow):
         print('F3 key pressed') 
         self.l_insert_Nitrokey.hide()  
         self.pro_btn.show()
-    #### helper
+    ### helper (not in use for now)
     def get_active_otp(self):
         who = "totp" if self.radio_totp.isChecked() else "hotp"
         idx = self.otp_combo_box.currentIndex()
@@ -842,6 +786,7 @@ class GUI(QtUtilsMixIn, QtWidgets.QMainWindow):
     def msg(self, what):
         what = what if isinstance(what, dict) else {"msg": what}
         self.sig_status_upd.emit(what)
+    ### helper (in use)
     #### overview
     @pyqtSlot()
     def create_hidden_volume(self):
@@ -1060,15 +1005,10 @@ class GUI(QtUtilsMixIn, QtWidgets.QMainWindow):
     
     def filter_the_table(self):
         #searchbox
-        #filter_text = str(self.searchbox.text())
-        #items = self.table_pws.findItems(filter_text, Qt.MatchContains)
         for iterator in range(self.table_pws.rowCount()):
             self.table_pws.showRow(iterator)
             if (self.searchbox.text() not in self.table_pws.item(iterator,1).text()):
                 self.table_pws.hideRow(iterator)
-        #if items:  # we have found something
-        #    item = items[0]  # take the first
-        #    self.table_pws.setCurrentItem(item)
 
     def cancel_pws_2(self):
         self.set_visible(QtWidgets.QFrame, ["groupbox_pw"], True) #changed to true
@@ -1173,14 +1113,8 @@ class GUI(QtUtilsMixIn, QtWidgets.QMainWindow):
             self.radio_hotp_2.setChecked(False)
             self.frame_totp.show()
             self.frame_hotp.hide()
-    @pyqtSlot()
-    def add_table_fido2(self):
-        row = self.table_fido2.rowCount()
-        self.table_fido2.insertRow(row)
-        self.table_fido2.setItem(row , 0, (QtWidgets.QTableWidgetItem("text1")))
-        self.table_fido2.setItem(row , 1, (QtWidgets.QTableWidgetItem("text2")))
-        self.table_fido2.setItem(row , 2, (QtWidgets.QTableWidgetItem("text3")))
-        self.table_fido2.setItem(row , 3, (QtWidgets.QTableWidgetItem("text4")))
+#########################################################################################
+# not in use for now
     #### OTP related callbacks
     @pyqtSlot()
     def slot_random_secret(self):
@@ -1336,7 +1270,7 @@ class GUI(QtUtilsMixIn, QtWidgets.QMainWindow):
                           f"{who_cap} not authenticated",
                           parent=self.pin_dialog)
             self.ask_pin(who)
-
+###############################################################################################
     @pyqtSlot()
     def init_gui(self):
         self.init_otp_conf()

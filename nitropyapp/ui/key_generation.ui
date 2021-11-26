@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>418</width>
-    <height>300</height>
+    <height>326</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -101,7 +101,7 @@ of OpenPGP keys directly on the Nitrokey.
      <widget class="QLabel" name="label_3">
       <property name="text">
        <string>Here they can determine the expiration date. 
-In &quot;advanced settings&quot;, the key type and size 
+In &quot;Advanced Settings&quot;, the key type and size 
  can be changed.</string>
       </property>
      </widget>

@@ -89,7 +89,7 @@
           <enum>Qt::StrongFocus</enum>
          </property>
          <property name="text">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;You should understand the properties of hidden volumes before proceeding. It can destroy your encrypted data! &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;You should understand the properties of hidden volume before proceeding. It can destroy your encrypted data! &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="scaledContents">
           <bool>false</bool>
@@ -114,9 +114,9 @@
        <item>
         <widget class="QLabel" name="label_3">
          <property name="text">
-          <string>1. If you decide to configure Hidden Volumes, you can not use the
+          <string>1. If you decide to configure hidden volume, you can not use the
  encrypted storage anymore. 
-2. This process may damage your existing encrypted Volume data.</string>
+2. This process may damage your existing encrypted volume data.</string>
          </property>
         </widget>
        </item>
@@ -465,7 +465,7 @@
          <item>
           <widget class="QLabel" name="l_sd_start_3">
            <property name="text">
-            <string notr="true">Hidden Volume size:</string>
+            <string notr="true">Hidden Volume Size:</string>
            </property>
           </widget>
          </item>
@@ -575,7 +575,7 @@
     <item>
      <widget class="QLabel" name="label_8">
       <property name="text">
-       <string>Are you sure to create hidden Volume on your Nitrokey Storage?</string>
+       <string>Are you sure to create hidden volume on your Nitrokey Storage?</string>
       </property>
      </widget>
     </item>
